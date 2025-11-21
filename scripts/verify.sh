@@ -6,17 +6,29 @@ echo "Demo Environment Verification"
 echo "=========================================="
 echo ""
 
-# Load version info
-if [ -f "VERSION" ]; then
-    source ./VERSION
-    echo "📌 Pinned Version: ${PACKAGE_VERSION}"
-    echo "📅 Created: ${CREATED}"
-    echo ""
-else
-    echo "❌ VERSION file not found"
+# Load configuration
+SCRIPT_DIR="$(dirname "$0")"
+if [ ! -f "${SCRIPT_DIR}/demo-config.sh" ]; then
+    echo "❌ Configuration not found"
+    echo "   Expected: ${SCRIPT_DIR}/demo-config.sh"
     echo "   Run ./scripts/setup.sh first"
     exit 1
 fi
+
+source "${SCRIPT_DIR}/demo-config.sh"
+
+# Load state file if it exists
+STATE_FILE=".demo-state"
+if [ -f "$STATE_FILE" ]; then
+    source "$STATE_FILE"
+fi
+
+echo "📌 Pinned Version: ${PACKAGE_VERSION}"
+echo "📅 Created: ${CREATED_DATE}"
+if [ -n "$LAST_SETUP" ]; then
+    echo "📝 Last Setup: ${LAST_SETUP}"
+fi
+echo ""
 
 ERRORS=0
 WARNINGS=0

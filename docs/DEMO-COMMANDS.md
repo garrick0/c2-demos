@@ -172,23 +172,26 @@ pwd
 claude
 ```
 
-**Expected Output:**
+**Expected Behavior:**
+- Claude Code **WILL** launch (the app starts normally)
+- However, when Claude tries to execute any Bash commands, they will be blocked
+- You'll see blocking messages when Claude attempts to run commands
+
+**If you ask Claude to run a command, you'll see:**
 ```
-╔══════════════════════════════════════════════════════════════╗
-║  🚫 Claude Code blocked in monorepo root                    ║
-║                                                              ║
-║  Running from root causes context confusion.                ║
-║                                                              ║
-║  Available projects:                                        ║
-║                                                              ║
-║    cd apps/api                                              ║
-║    cd apps/web                                              ║
-║    cd packages/core                                         ║
-║    cd packages/ui                                           ║
-║                                                              ║
-║  Navigate to a specific project directory first             ║
-╚══════════════════════════════════════════════════════════════╝
+❌ Check Failed:
+
+  Operations in monorepo root are restricted
+  💡 Navigate to a specific project directory
+
+  Available projects:
+    - apps/api
+    - apps/web
+    - packages/core
+    - packages/ui
 ```
+
+**Important Note:** The hook blocks Bash operations, not Claude Code startup. This is by design - Claude can start and interact with you, but cannot execute potentially dangerous commands in the monorepo root.
 
 ### 9. Navigate to a Project
 

@@ -1,17 +1,33 @@
 # Demo Kit .gitignore
 
+# Runtime state file (updated by scripts)
+.demo-state
+
 # The example monorepo is cloned by setup.sh from the demo branch
 # DO NOT commit it - it's already stored in the main repo's demo branch
 example-monorepo/
 
-# Recording outputs
+# Recording outputs (large files)
 recordings/*.mp4
 recordings/*.mov
 recordings/*.webm
+recordings/segments/*.mp4
+recordings/segments/*.webm
+recordings/social/*.mp4
+recordings/social/*.webm
+
+# Keep small example GIFs for documentation
 recordings/*.gif
+!recordings/quick-demo.gif
+recordings/segments/*.gif
+!recordings/segments/0*.gif
 
 # Keep the recordings directory but not its contents
 !recordings/.gitkeep
+
+# Test recordings
+recordings/test.gif
+vhs-scripts/test.tape
 
 # Temporary files
 *.log

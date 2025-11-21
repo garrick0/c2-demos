@@ -51,8 +51,9 @@ cd ..
 ```
 claude-monorepo-guard-demo-kit/
 ├── README.md              # This file
-├── VERSION               # Pinned version information
+├── .demo-state           # Runtime state (gitignored)
 ├── scripts/
+│   ├── demo-config.sh   # Version configuration
 │   ├── setup.sh         # Initial setup script
 │   ├── verify.sh        # Environment verification
 │   └── cleanup.sh       # Reset to clean state

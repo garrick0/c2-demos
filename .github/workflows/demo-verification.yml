@@ -61,7 +61,7 @@ jobs:
 
       - name: Install pinned version
         run: |
-          source VERSION
+          source scripts/demo-config.sh
           echo "Installing claude-monorepo-guard@${PACKAGE_VERSION}"
           npm install -g claude-monorepo-guard@${PACKAGE_VERSION}
 
