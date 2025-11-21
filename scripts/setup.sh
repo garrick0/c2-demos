@@ -38,16 +38,20 @@ if [ -d "example-monorepo" ]; then
     cd ..
 else
     echo "📥 Cloning example monorepo..."
-    # Try to clone from parent directory first
+    # Try to clone from parent directory first (local development)
     if [ -d "../claude-monorepo-guard-demo" ]; then
         echo "  Cloning from local worktree..."
         git clone ../claude-monorepo-guard-demo example-monorepo
     elif [ -d "../claude-monorepo-guard-cleanup" ]; then
         echo "  Cloning from main repo..."
         git clone ../claude-monorepo-guard-cleanup example-monorepo
+    elif [ -n "$GITHUB_ACTIONS" ]; then
+        echo "  Cloning from GitHub (CI environment)..."
+        git clone https://github.com/garrick0/claude-guard.git example-monorepo
     else
         echo "  ❌ Error: Cannot find source repository"
         echo "     Expected ../claude-monorepo-guard-demo or ../claude-monorepo-guard-cleanup"
+        echo "     Or GITHUB_ACTIONS environment variable for CI"
         exit 1
     fi
 
