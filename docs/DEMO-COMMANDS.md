@@ -1,17 +1,17 @@
 # Claude Monorepo Guard - Demo Commands
 
-This document provides the exact commands to run for demonstrating claude-monorepo-guard v2.0.0.
+This document provides the exact commands to run for demonstrating claude-monorepo-guard v2.1.2.
 
 ## ⚠️ Important: Pinned Version
 
-This demo uses **claude-monorepo-guard@2.0.0** (not @latest) for reproducibility.
+This demo uses **claude-monorepo-guard@2.1.2** (not @latest) for reproducibility.
 
 ## Prerequisites
 
 Before starting, ensure you've:
 1. Run `../scripts/setup.sh` from demo kit root
 2. Run `../scripts/verify.sh` to check environment
-3. Installed the pinned version: `npm install -g claude-monorepo-guard@2.0.0`
+3. Installed the pinned version: `npm install -g claude-monorepo-guard@2.1.2`
 
 ## Demo Commands
 
@@ -48,14 +48,14 @@ packages/
 ### 2. Verify Claude Monorepo Guard Installation
 
 ```bash
-# Check the installed version (should be 2.0.0)
+# Check the installed version (should be 2.1.2)
 claude-monorepo-guard --version
 
 # Or check globally installed packages
 npm list -g claude-monorepo-guard
 ```
 
-**Expected:** Version 2.0.0
+**Expected:** Version 2.1.2
 
 ### 3. Check Current Status
 
@@ -278,7 +278,7 @@ Available projects:
 
 ## Key Features Demonstrated
 
-✅ **Version Pinning** - Using specific version 2.0.0
+✅ **Version Pinning** - Using specific version 2.1.2
 ✅ **Automatic Detection** - Recognized pnpm workspace automatically
 ✅ **Branch Protection** - Blocks work on main/master branches
 ✅ **Root Protection** - Prevents Claude Code in monorepo root
@@ -317,7 +317,7 @@ npm list -g claude-monorepo-guard
 
 # Reinstall correct version
 npm uninstall -g claude-monorepo-guard
-npm install -g claude-monorepo-guard@2.0.0
+npm install -g claude-monorepo-guard@2.1.2
 ```
 
 ## Cleanup After Demo
@@ -347,13 +347,13 @@ cd ../..
 ## Notes for Presenter
 
 - Pause after each major output to let audience read
-- Emphasize the version number (2.0.0) at start
+- Emphasize the version number (2.1.2) at start
 - Highlight that config is Git-trackable
 - Show that no shell modifications are needed
 - Mention token savings from not processing entire monorepo
 
 ---
 
-**Demo Version:** claude-monorepo-guard@2.0.0
+**Demo Version:** claude-monorepo-guard@2.1.2
 **Demo Commit:** cb149a8b228004ac94100eb507fd362e0ff65c89
 **Last Updated:** 2025-11-21
