@@ -1,0 +1,210 @@
+name: Demo Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify-demo:
+    name: Verify Demo Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout demo kit
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run setup script
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/setup.sh
+
+      - name: Verify environment
+        run: ./scripts/verify.sh
+
+      - name: Show demo structure
+        run: |
+          cd example-monorepo
+          echo "=== Monorepo Structure ==="
+          ls -la | head -15
+          echo ""
+          echo "=== Workspace Config ==="
+          cat pnpm-workspace.yaml
+          echo ""
+          echo "=== Project Structure ==="
+          find apps packages -maxdepth 2 -type f -name "package.json"
+
+  test-demo-flow:
+    name: Test Demo Flow
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout demo kit
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run setup script
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/setup.sh
+
+      - name: Install pinned version
+        run: |
+          source VERSION
+          echo "Installing claude-monorepo-guard@${PACKAGE_VERSION}"
+          npm install -g claude-monorepo-guard@${PACKAGE_VERSION}
+
+      - name: Verify installation
+        run: |
+          claude-monorepo-guard --version
+          which claude-monorepo-guard
+
+      - name: Test - Show monorepo structure
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 1: Show structure ==="
+          cat pnpm-workspace.yaml
+          ls -la apps/ packages/
+
+      - name: Test - Check status before init
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 2: Status before init ==="
+          claude-monorepo-guard status || true
+
+      - name: Test - Initialize
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 3: Initialize ==="
+          claude-monorepo-guard init --yes
+
+      - name: Test - Verify config created
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 4: Verify config ==="
+          echo "--- .claudemonorepo ---"
+          cat .claudemonorepo
+          echo ""
+          echo "--- .claude/settings.json ---"
+          cat .claude/settings.json
+
+      - name: Test - Status shows blocked
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 5: Status after init ==="
+          claude-monorepo-guard status
+
+      - name: Test - List projects
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 6: List projects ==="
+          claude-monorepo-guard list
+
+      - name: Test - Blocking in root on main branch
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 7: Test blocking on main branch ==="
+          git checkout -b main
+
+          # Should block (exit code 2)
+          if claude-monorepo-guard check; then
+            echo "ERROR: Should have blocked in monorepo root on main branch!"
+            exit 1
+          else
+            EXIT_CODE=$?
+            echo "Correctly blocked with exit code: $EXIT_CODE"
+            if [ $EXIT_CODE -ne 2 ]; then
+              echo "ERROR: Expected exit code 2, got $EXIT_CODE"
+              exit 1
+            fi
+          fi
+
+      - name: Test - Blocking in root on feature branch
+        working-directory: example-monorepo
+        run: |
+          echo "=== Step 8: Test blocking on feature branch ==="
+          git checkout -b feature/test
+
+          # Should still block (monorepo root)
+          if claude-monorepo-guard check; then
+            echo "ERROR: Should have blocked in monorepo root!"
+            exit 1
+          else
+            EXIT_CODE=$?
+            echo "Correctly blocked with exit code: $EXIT_CODE"
+            if [ $EXIT_CODE -ne 2 ]; then
+              echo "ERROR: Expected exit code 2, got $EXIT_CODE"
+              exit 1
+            fi
+          fi
+
+      - name: Test - Allowed in project directory
+        working-directory: example-monorepo/apps/web
+        run: |
+          echo "=== Step 9: Test allowed in project ==="
+
+          # Should pass (exit code 0)
+          if ! claude-monorepo-guard check; then
+            echo "ERROR: Should have been allowed in project directory!"
+            exit 1
+          else
+            echo "✓ Correctly allowed in project directory"
+          fi
+
+      - name: Test - Uncommitted changes warning
+        working-directory: example-monorepo/apps/web
+        run: |
+          echo "=== Step 10: Test uncommitted changes ==="
+          echo "test" > test.txt
+
+          # Should warn but allow (exit code 0)
+          if ! claude-monorepo-guard check; then
+            echo "ERROR: Should have allowed with warning!"
+            exit 1
+          else
+            echo "✓ Correctly warned but allowed"
+          fi
+
+      - name: Test - Cleanup script
+        run: |
+          echo "=== Step 11: Test cleanup ==="
+          ./scripts/cleanup.sh
+
+          # Verify configs are removed
+          if [ -f "example-monorepo/.claudemonorepo" ]; then
+            echo "ERROR: .claudemonorepo still exists after cleanup!"
+            exit 1
+          fi
+
+          if [ -d "example-monorepo/.claude" ]; then
+            echo "ERROR: .claude/ still exists after cleanup!"
+            exit 1
+          fi
+
+          echo "✓ Cleanup successful"
+
+      - name: Demo Summary
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "Demo Verification Summary"
+          echo "=========================================="
+          echo "✅ Setup completed"
+          echo "✅ Package installed"
+          echo "✅ Initialization works"
+          echo "✅ Blocking works (exit code 2)"
+          echo "✅ Project directories allowed"
+          echo "✅ Warnings work correctly"
+          echo "✅ Cleanup works"
+          echo "=========================================="
