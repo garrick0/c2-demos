@@ -47,7 +47,7 @@ else
         git clone ../claude-monorepo-guard-cleanup example-monorepo
     elif [ -n "$GITHUB_ACTIONS" ]; then
         echo "  Cloning from GitHub (CI environment)..."
-        git clone https://github.com/garrick0/claude-guard.git example-monorepo
+        git clone --branch ${DEMO_BRANCH} https://github.com/garrick0/claude-guard.git example-monorepo
     else
         echo "  ❌ Error: Cannot find source repository"
         echo "     Expected ../claude-monorepo-guard-demo or ../claude-monorepo-guard-cleanup"
