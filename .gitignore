@@ -1,0 +1,29 @@
+# Demo Kit .gitignore
+
+# The example monorepo is cloned by setup.sh from the demo branch
+# DO NOT commit it - it's already stored in the main repo's demo branch
+example-monorepo/
+
+# Recording outputs
+recordings/*.mp4
+recordings/*.mov
+recordings/*.webm
+recordings/*.gif
+
+# Keep the recordings directory but not its contents
+!recordings/.gitkeep
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
+
+# Node modules (if any)
+node_modules/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
