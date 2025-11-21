@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-DEMO_VERSION="2.0.0"
+DEMO_VERSION="2.1.2"
 DEMO_COMMIT="cb149a8b228004ac94100eb507fd362e0ff65c89"
 DEMO_BRANCH="demo/example-project"
 
